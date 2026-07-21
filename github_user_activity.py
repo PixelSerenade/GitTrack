@@ -1,5 +1,6 @@
 import fire 
 import urllib.request
+import urllib.error
 import json
 
 class github:
@@ -10,12 +11,24 @@ class github:
 
         request_headers = {'User-Agent': 'Python-Activity-Fetcher'}
 
-        req=urllib.request.Request(url,headers=request_headers)
+        try:
+            req=urllib.request.Request(url,headers=request_headers)
+            #print(req)
+            with urllib.request.urlopen(req) as res:
+                data=json.loads(res.read().decode("utf-8"))
 
-        #print(req)
-        with urllib.request.urlopen(req) as res:
-  
-            data=json.loads(res.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            if(e.code==404):
+                print(f"{username} was Not found On github")
+            else:
+                print(f"Github API Error {e.close} reason is {e.reason}")
+            return
+        
+        except urllib.error.URLError as e:
+            print(f"Github Error bec of reason  {e.reason}")
+
+        if not data:
+            print(f"No new Activities were found for the user {username}")
         
         for x in data:
             event_type=x["type"]
