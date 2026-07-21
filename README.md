@@ -17,4 +17,4 @@ pip install requests
 
 Run the application with a GitHub username:
 
-python gittrack.py <github-username>
+python gittrack.py < github-username >
